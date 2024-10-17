@@ -1,0 +1,35 @@
+# This line loads the Firebase App Distribution plugin
+fastlane_require 'fastlane-plugin-firebase_app_distribution'
+
+# Sets the default platform to Android
+default_platform(:android)
+
+# Defines the Android platform
+platform :android do
+  desc "Flutter App"
+
+  # The gradle action builds your Flutter app
+  gradle(
+    task: 'assemble', # Specifies the Gradle task to run
+    flags: "-Ptarget=lib/main.dart", # Passes additional flags to the Gradle command
+    build_type: 'Release', # Specifies the build type
+    properties: {
+      "android.injected.signing.store.file" => "/Users/ashrafulhaque/upload-keystore.jks", # Path to the keystore file
+      "android.injected.signing.store.password" => "ash123", # Keystore password
+      "android.injected.signing.key.alias" => "upload", # Key alias
+      "android.injected.signing.key.password" => "ash123" # Key password
+    }
+  )
+
+  # Defines a lane named deploy
+  lane :deploy do
+    # The firebase_app_distribution action uploads the APK to Firebase
+    firebase_app_distribution(
+      app: "1:216673360807:android:a06e7478869a2891233482", # Firebase App ID
+#       groups: "groupName", # Tester group
+      release_notes: "Add new feature", # Release notes
+      firebase_cli_path: "/usr/local/bin/firebase", # Path to the Firebase CLI
+      apk_path: "../build/app/outputs/flutter-apk/app-release.apk" # Path to the APK
+    )
+  end
+end

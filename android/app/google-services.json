@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "216673360807",
+    "project_id": "stream-buzz",
+    "storage_bucket": "stream-buzz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:216673360807:android:a06e7478869a2891233482",
+        "android_client_info": {
+          "package_name": "com.example.stream_buzz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVY3EFHUt7JlWgKy8xu33MK55Pin-crZk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
