@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:stream_buzz/feature/home/presentation/controllers/home_controller.dart';
+import 'package:stream_buzz/feature/home/presentation/widgets/products_list.dart';
+import 'package:stream_buzz/injection/injector.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -9,25 +11,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final controller = HomeController();
-
-  @override
-  void initState() {
-    super.initState();
-    controller.getExampleFileStatus.listen((event) {
-      if (event == Status.loading) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          showCustomDialog(context);
-        });
-      } else if (event != null && event != Status.loading) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (Navigator.canPop(context)) {
-            Navigator.of(context).pop();
-          }
-        });
-      }
-    });
-  }
+  final controller = getIt.get<HomeController>();
 
   @override
   void dispose() {
@@ -41,59 +25,38 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.purple,
         title: const Text(
-          'Home Screen',
+          'Products',
           style: TextStyle(color: Colors.white),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          children: [
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  controller.downloadExampleFile();
-                },
-                child: const Text('Download Example.file'),
-              ),
-            ),
-            const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Next'),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
+      body: StreamBuilder(
+        stream: controller.getProductStatusStream,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            if( snapshot.data == Status.initial ) {
+              return const Text('Click to fetch the products');
+            } else if(snapshot.data == Status.loading) {
+              return const CircularProgressIndicator();
+            } else if(snapshot.data == Status.failed) {
+              return const Text('Failed to fetch products');
+            } else if(snapshot.data == Status.success) {
+              return StreamBuilder(stream: controller.getProductsStream, builder: (context, productSnapshot) {
+                if (productSnapshot.hasData) {
+                  return ProductsList(productItems: productSnapshot.data!);
+                }
+                return const SizedBox.shrink();
+              });
+            }
+          }
+          return const SizedBox.shrink();
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          controller.getAllProducts();
+        },
+        child: const Icon(Icons.download),
       ),
     );
   }
-}
-
-void showCustomDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10), // Rounded corners
-        ),
-        child: const SizedBox(
-          width: 300, // Custom width
-          height: 300, // Custom height
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Loading', style: TextStyle(fontSize: 18)),
-              LinearProgressIndicator(),
-            ],
-          ),
-        ),
-      );
-    },
-  );
 }

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:stream_buzz/feature/home/presentation/screens/home_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:stream_buzz/injection/injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  configureDependencies();
   runApp(const MyApp());
 }
 
