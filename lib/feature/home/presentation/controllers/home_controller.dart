@@ -14,7 +14,7 @@ class HomeController extends BaseController {
   final _products = BehaviorSubject<List<ProductEntity>>.seeded([]);
 
   Stream<List<ProductEntity>> get getProductsStream =>
-      _products.asBroadcastStream();
+      _products.stream.asBroadcastStream();
 
   /// Product Status stream
   final _productsStatus = BehaviorSubject<Status>.seeded(Status.initial);
