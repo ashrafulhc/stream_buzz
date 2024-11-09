@@ -3,8 +3,9 @@ import 'dart:developer';
 import 'package:rxdart/rxdart.dart';
 import 'package:stream_buzz/feature/home/domain/entities/product_entity.dart';
 import 'package:stream_buzz/feature/home/domain/usecases/get_all_products_usecase.dart';
+import 'package:stream_buzz/feature/home/presentation/widgets/controller_scope/src/controller_scope.dart';
 
-class HomeController {
+class HomeController extends BaseController {
   final GetAllProductsUseCase _getAllProductsUseCase;
 
   HomeController(this._getAllProductsUseCase);
@@ -12,12 +13,14 @@ class HomeController {
   /// Product stream
   final _products = BehaviorSubject<List<ProductEntity>>.seeded([]);
 
-  Stream<List<ProductEntity>> get getProductsStream => _products.stream;
+  Stream<List<ProductEntity>> get getProductsStream =>
+      _products.stream.asBroadcastStream();
 
   /// Product Status stream
   final _productsStatus = BehaviorSubject<Status>.seeded(Status.initial);
 
-  Stream<Status> get getProductStatusStream => _productsStatus.stream;
+  Stream<Status> get getProductStatusStream =>
+      _productsStatus.stream.asBroadcastStream();
 
   /// Get all products
   Future<void> getAllProducts() async {
@@ -34,6 +37,7 @@ class HomeController {
   }
 
   /// Dispose all the streams here
+  @override
   void dispose() {
     _products.close();
     _productsStatus.close();
