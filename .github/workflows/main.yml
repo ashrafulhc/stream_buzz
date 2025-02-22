@@ -1,0 +1,30 @@
+name: "Flutter Analysis"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  analyze:
+    name: Flutter Analysis
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set Up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.1"
+          channel: "stable"
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Run Flutter Doctor
+        run: flutter doctor
+
+      - name: Run Flutter Analyze
+        run: flutter analyze
